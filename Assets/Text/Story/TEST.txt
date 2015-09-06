@@ -8,17 +8,21 @@ PosVec 	| 5, 0, 0, false
 ID 		| JH
 Name 	| Jeff Hirokawa
 Sprite  | ConnorBlue
-PosVec 	| -5, 0, 0, true
+PosVec 	| -1, 0, 0, true
 #END
 
-
-
+#CHARACTER
+ID 		| KL
+Name 	| Kris Lil
+PosVec 	| -6, 0, 0, true
+Sprite  | ConnorBlue
+#END
 
 
 #T | JH
 Hello Craig. My name is Jef the best person ever. I like to eat
 pinapples on my pizza like a filthy heathen.
-#T | CJ
+#T | KL
 I'll bet you're friends with that connor guy, too. I hear he sometimes
 rolls around on the floor pretending to be a slug.
 #T | JH
@@ -29,7 +33,7 @@ need to realistically type into one box. But this is a test. Ahahahaha.
 #T | CJ
 Testing single lines.
 #T | JH
-Testing multiple lines.
+s
 Like
 lots
 of
@@ -38,4 +42,14 @@ small
 line
 agagaga
 poop
+#T | CJ
+I like dicks.
+#T | CJ
+Testing single lines.
+#T | CJ
+Testing single lines.
+#T | CJ
+Testing single lines.
+#T | CJ
+Testing single lines.
 #END

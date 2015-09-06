@@ -5,9 +5,8 @@
  * 
  * TO ADD:
  *  - Scene Event Queue
- * 		- Animation Node
- * 		- Text Node
- * 		- ?
+ * 		- Animation Queue
+ *      - Make input not buggy
  */
 //------------------------------------------------------------------------------
 using UnityEngine;
@@ -29,26 +28,45 @@ public abstract class SceneNode {
 	}
 
 }
-
+/* Text nodes are for displaying text. Yup.
+ */
 public class TextNode : SceneNode {
-
+	
 	public string Name = "DEFAULT NAME";
 	public string Text = "DEFAULT TEXT";
-
+	
 	public TextNode(string name, string text) {
 		Name = name;
 		Text = text;
 	}
 	public override float Activate(SceneManager SM) {
-		SM.TM.Activate (this);
+		SM.TM.Activate(this);
 		return -1.0f;
 	}
 }
 
+/* Anim nodes are for moving and manipulating characters using an animation
+ * node queue.
+ */
+/*public class AnimNode : SceneNode {
+	
+	public string Name = "DEFAULT NAME";
+	public string Text = "DEFAULT TEXT";
+	
+	public AnimNode(string name, string text) {
+		Name = name;
+		Text = text;
+	}
+	public override float Activate(SceneManager SM) {
+		SM.TM.Activate(this);
+		return -1.0f;
+	}
+}*/
+
 
 /* The scene manager maintains the scene node queue and makes sure events
- * are fired correctly and in a timely manner. Should take a text file and
- * generate all the characters accordingly.
+ * are fired correctly and in a timely manner. Takes a text file and
+ * generates all the characters/nodes accordingly.
  */
 public class SceneManager : MonoBehaviour {
 
