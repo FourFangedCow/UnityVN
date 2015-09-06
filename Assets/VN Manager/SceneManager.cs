@@ -136,6 +136,8 @@ public class SceneManager : MonoBehaviour {
 			CharacterNames.TryGetValue(args[1].Trim(), out cname);
 			CreateTextNode(sr, cname);
 			break;
+		case "#A":
+			break;
 		default:
 			break;
 		}
@@ -167,7 +169,11 @@ public class SceneManager : MonoBehaviour {
 				CharacterNames.Add(id, args[1].Trim());
 				break;
 			case "Sprite":
-				character.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(args[1].Trim());
+				Sprite[] sprites = Resources.LoadAll<Sprite>(args[1].Trim());
+				foreach(var sp in sprites) {
+					character.GetComponent<CharacterBase>().Sprites.Add(sp.name, sp);
+				}
+				character.GetComponent<CharacterBase>().SetSprite("Idle");
 				break;
 			case "PosVec":
 				args = args[1].Split(',');

@@ -1,13 +1,13 @@
 #CHARACTER
 ID 		| CJ
 Name 	| Craig Jong
-Sprite  | ConnorRed
+Sprite  | Connor
 PosVec 	| 5, 0, 0, false
 #END
 #CHARACTER
 ID 		| JH
 Name 	| Jeff Hirokawa
-Sprite  | ConnorBlue
+Sprite  | Connor
 PosVec 	| -1, 0, 0, true
 #END
 
@@ -15,11 +15,11 @@ PosVec 	| -1, 0, 0, true
 ID 		| KL
 Name 	| Kris Lil
 PosVec 	| -6, 0, 0, true
-Sprite  | ConnorBlue
+Sprite  | Connor
 #END
 
 
-#T | JH
+#T | JH |
 Hello Craig. My name is Jef the best person ever. I like to eat
 pinapples on my pizza like a filthy heathen.
 #T | KL
