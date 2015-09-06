@@ -1,5 +1,41 @@
-JEF|TEST
-CRAIG|I LIVE FOR EATING POTATO
-JEF|I LOVE HUGE DONG
-CRAIG|PUPPIES SUCK
-JEF|APPLES TASTE LIKE MONKEY BLADDER MIXED WITH PINEAPPLES
+#CHARACTER
+ID 		| CJ
+Name 	| Craig Jong
+Sprite  | ConnorRed
+PosVec 	| 5, 0, 0, false
+#END
+#CHARACTER
+ID 		| JH
+Name 	| Jeff Hirokawa
+Sprite  | ConnorBlue
+PosVec 	| -5, 0, 0, true
+#END
+
+
+
+
+
+#T | JH
+Hello Craig. My name is Jef the best person ever. I like to eat
+pinapples on my pizza like a filthy heathen.
+#T | CJ
+I'll bet you're friends with that connor guy, too. I hear he sometimes
+rolls around on the floor pretending to be a slug.
+#T | JH
+He definitely does. But its okay because he's a pretty cool guy. I don't
+know how much text I can put in a single block, but I should really test
+out how much can fit. To be honest its probably way more than I'd ever
+need to realistically type into one box. But this is a test. Ahahahaha. 
+#T | CJ
+Testing single lines.
+#T | JH
+Testing multiple lines.
+Like
+lots
+of
+really
+small
+line
+agagaga
+poop
+#END

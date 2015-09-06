@@ -1,4 +1,2 @@
 # UnityVN
-Unity Visual Novel Base
-
-Probably useful for something stupid.
+A Visual Novel project based in Unity.
