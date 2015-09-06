@@ -62,7 +62,8 @@ public class TextNode : SceneNode {
 		return -1.0f;
 	}
 }*/
-
+/* Sprite nodes change the character's sprite.
+ */
 public class SpriteNode : SceneNode {
 	public string ID = "Default";
 	public string Name = "Idle";
