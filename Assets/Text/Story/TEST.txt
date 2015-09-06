@@ -19,12 +19,13 @@ Sprite  | Connor
 #END
 
 
-#T | JH |
+#T | JH
 Hello Craig. My name is Jef the best person ever. I like to eat
 pinapples on my pizza like a filthy heathen.
 #T | KL
 I'll bet you're friends with that connor guy, too. I hear he sometimes
 rolls around on the floor pretending to be a slug.
+#S | KL | Angry
 #T | JH
 He definitely does. But its okay because he's a pretty cool guy. I don't
 know how much text I can put in a single block, but I should really test
@@ -32,6 +33,7 @@ out how much can fit. To be honest its probably way more than I'd ever
 need to realistically type into one box. But this is a test. Ahahahaha. 
 #T | CJ
 Testing single lines.
+#S | CJ | Dead
 #T | JH
 s
 Like

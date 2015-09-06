@@ -63,6 +63,20 @@ public class TextNode : SceneNode {
 	}
 }*/
 
+public class SpriteNode : SceneNode {
+	public string ID = "Default";
+	public string Name = "Idle";
+	public SpriteNode(string id, string name) {
+		ID = id;
+		Name = name;
+	}
+	public override float Activate(SceneManager SM) {
+		SM.GetCharObj(ID).GetComponent<CharacterBase>().SetSprite(Name);
+		SM.NextSceneNode ();
+		return -1.0f;
+	}
+}
+
 
 /* The scene manager maintains the scene node queue and makes sure events
  * are fired correctly and in a timely manner. Takes a text file and
@@ -110,6 +124,14 @@ public class SceneManager : MonoBehaviour {
 	}
 
 
+	// --- ! GET FOR CHARACTERS ! --- //
+	public GameObject GetCharObj (string ID) {
+		GameObject obj;
+		CharacterObjects.TryGetValue (ID, out obj);
+		return obj;
+	}
+
+
 	// --- ! READING IN TEXT ! --- //
 	void LoadScene (string fileName) {
 		string line;
@@ -138,11 +160,13 @@ public class SceneManager : MonoBehaviour {
 			break;
 		case "#A":
 			break;
+		case "#S":
+			SceneNodeQueue.Enqueue(new SpriteNode(args[1].Trim(), args[2].Trim()));
+			break;
 		default:
 			break;
 		}
 	}
-
 
 	void CreateTextNode (StreamReader sr, string cname) {
 		string line = sr.ReadLine();
