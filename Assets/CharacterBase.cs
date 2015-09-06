@@ -3,7 +3,7 @@ using System.Collections;
 
 public class CharacterBase : MonoBehaviour {
 
-	public IList<Sprite> Emotions = new IList<Sprite>();
+	//public IList<Sprite> Emotions = new IList<Sprite>();
 
 
 	// Use this for initialization
