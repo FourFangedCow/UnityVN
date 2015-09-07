@@ -22,6 +22,7 @@ Sprite  | Connor
 #T | JH
 Hello Craig. My name is Jef the best person ever. I like to eat
 pinapples on my pizza like a filthy heathen.
+#A | JH | Bounce
 #T | KL
 I'll bet you're friends with that connor guy, too. I hear he sometimes
 rolls around on the floor pretending to be a slug.

@@ -48,20 +48,20 @@ public class TextNode : SceneNode {
 /* Anim nodes are for moving and manipulating characters using an animation
  * node queue.
  */
-/*public class AnimNode : SceneNode {
+public class AnimNode : SceneNode {
 	
-	public string Name = "DEFAULT NAME";
-	public string Text = "DEFAULT TEXT";
+	public string ID = "DEFAULT";
+	public string AnimName = "";
 	
-	public AnimNode(string name, string text) {
-		Name = name;
-		Text = text;
+	public AnimNode(string id, string anim) {
+		ID = id;
+		AnimName = anim;
 	}
 	public override float Activate(SceneManager SM) {
-		SM.TM.Activate(this);
-		return -1.0f;
+		SM.AM.AddOverwriteAnimation(ID, AnimName);
+		return 0.0f;
 	}
-}*/
+}
 /* Sprite nodes change the character's sprite.
  */
 public class SpriteNode : SceneNode {
@@ -84,8 +84,9 @@ public class SpriteNode : SceneNode {
  * generates all the characters/nodes accordingly.
  */
 public class SceneManager : MonoBehaviour {
-
+	
 	public TextManager TM;
+	public AnimManager AM;
 	Queue<SceneNode> SceneNodeQueue = new Queue<SceneNode>();								// The scene node queue
 	Dictionary<string,GameObject> CharacterObjects = new Dictionary<string,GameObject>();	// List of character objects by ID
 	Dictionary<string,string> CharacterNames = new Dictionary<string,string>();				// List of character names by ID
@@ -99,7 +100,8 @@ public class SceneManager : MonoBehaviour {
 
 	void Start () {
 		TM = new TextManager(this);
-		LoadScene ("Assets//Text//Story//TEST.txt"); // TEMP
+		AM = new AnimManager(this);
+		LoadScene ("Assets//VisualNovel//Text//Story//TEST.txt"); // TEMP
 		NextSceneNode();
 	}
 
@@ -116,12 +118,13 @@ public class SceneManager : MonoBehaviour {
 		}
 
 		TM.Update();
+		AM.Update();
 	
 		// Updating the scene node queue
-		//SceneTimer += Time.deltaTime;
-		//if (SceneDelay != -1.0f && SceneTimer > SceneDelay) {
-		//	NextSceneNode ();
-		//}
+		SceneTimer += Time.deltaTime;
+		if (SceneDelay != -1.0f && SceneTimer > SceneDelay) {
+			NextSceneNode ();
+		}
 	}
 
 
@@ -160,6 +163,7 @@ public class SceneManager : MonoBehaviour {
 			CreateTextNode(sr, cname);
 			break;
 		case "#A":
+			SceneNodeQueue.Enqueue(new AnimNode(args[1].Trim(), args[2].Trim()));
 			break;
 		case "#S":
 			SceneNodeQueue.Enqueue(new SpriteNode(args[1].Trim(), args[2].Trim()));
@@ -212,6 +216,9 @@ public class SceneManager : MonoBehaviour {
 			}
 		} while(args[0] != "#END");
 		CharacterObjects.Add(id, character);
+	}
+	public void PrintTest(string s) {
+		print (s);
 	}
 }
 
