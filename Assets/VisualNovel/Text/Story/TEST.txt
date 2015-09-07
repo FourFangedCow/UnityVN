@@ -26,6 +26,7 @@ pinapples on my pizza like a filthy heathen.
 #T | KL
 I'll bet you're friends with that connor guy, too. I hear he sometimes
 rolls around on the floor pretending to be a slug.
+#A | KL | Bounce
 #S | KL | Angry
 #T | JH
 He definitely does. But its okay because he's a pretty cool guy. I don't

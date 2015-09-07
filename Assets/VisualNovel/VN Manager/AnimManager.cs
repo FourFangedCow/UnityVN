@@ -7,15 +7,10 @@ using UnityEngine.UI;
 // TYPES: Move, Scale, Flip, Visible?
 class ANode {
 	public float Duration;
-	public ANode () {
-	}
-	
+	public ANode () { }
 	// Activate function. Returns the delay if timed. Returns -1 if infinite.
-	public virtual void Activate(GameObject target, Vector3 originalPos, float time) {
-	}
-	public virtual void Complete(GameObject target, Vector3 originalPos) {
-	}
-
+	public virtual void Activate(GameObject target, Vector3 originalPos, float time) { }
+	public virtual void Complete(GameObject target, Vector3 originalPos) {}
 }
 
 /* Absolute movement node
@@ -67,7 +62,7 @@ class ShiftNode : ANode {
 class AnimationList {
 	float Timer;
 	float Duration;
-
+	
 	GameObject Target;
 	Vector3 OriginalPos;
 
@@ -75,6 +70,7 @@ class AnimationList {
 	public LinkedListNode<ANode> CurNode;
 	
 	public bool Complete = false;
+	public bool Animating = false;
 	public string ID;
 
 	public AnimationList(LinkedList<ANode> list, GameObject target, string id) {
@@ -82,10 +78,14 @@ class AnimationList {
 		Target = target;
 		AList = list;
 		CurNode = AList.First;
+		Timer = 0;
+		Duration = CurNode.Value.Duration;
 		OriginalPos = Target.GetComponent<Transform>().position;
 	}
 
 	public void Update() {
+		if(!Animating)
+			Animating = true;
 		Timer += Time.deltaTime;
 		if (Timer > Duration) {
 			Timer = 0;
@@ -94,11 +94,17 @@ class AnimationList {
 			OriginalPos = Target.GetComponent<Transform>().position;
 			if (CurNode == null) {
 				Complete = true; return;
-			} else
-				Duration = CurNode.Value.Duration;
-		} else {
-			CurNode.Value.Activate(Target, OriginalPos, Timer);
+			} else Duration = CurNode.Value.Duration;
+		} else CurNode.Value.Activate(Target, OriginalPos, Timer);
+	}
+
+	public void CompleteAnimation() {
+		while (CurNode != null) {
+			CurNode.Value.Complete (Target, OriginalPos);
+			OriginalPos = Target.GetComponent<Transform> ().position;
+			CurNode = CurNode.Next;
 		}
+		Complete = true;
 	}
 }
 
@@ -149,8 +155,18 @@ public class AnimManager {
 	
 	// Input Function
 	public void InputPressed() {
+		Dictionary<string, AnimationList>.ValueCollection values = AnimationLists.Values;
+		foreach(AnimationList list in values) {
+			if(list.Animating) {
+				list.CompleteAnimation();
+				MarkedForRemoval.Add(list.ID);
+			}
+		}
+		foreach(string id in MarkedForRemoval)
+			AnimationLists.Remove(id);
+		MarkedForRemoval.Clear();
 	}
-
+	
 	public void AddOverwriteAnimation(string id, string anim) {
 		AnimationLists.Add(id, GetAnimationList(id, anim));
 	}

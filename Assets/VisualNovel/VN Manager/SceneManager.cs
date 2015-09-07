@@ -115,6 +115,7 @@ public class SceneManager : MonoBehaviour {
 	void Update () {
 		if (Input.GetKeyUp (KeyCode.Space)) { // INPUT SHOULD BE CHANGED
 			TM.InputPressed();
+			AM.InputPressed();
 		}
 
 		TM.Update();
