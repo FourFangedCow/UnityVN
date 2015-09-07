@@ -9,8 +9,8 @@ class ANode {
 	public float Duration;
 	public ANode () { }
 	// Activate function. Returns the delay if timed. Returns -1 if infinite.
-	public virtual void Activate(GameObject target, Vector3 originalPos, float time) { }
-	public virtual void Complete(GameObject target, Vector3 originalPos) {}
+	public virtual void Activate(GameObject target, Vector3 originalPos, Vector4 originalColor, float time) { }
+	public virtual void Complete(GameObject target, Vector3 originalPos, Vector4 originalColor) {}
 }
 
 /* Absolute movement node
@@ -29,13 +29,13 @@ class MoveNode : ANode {
 		EndPos = endPos;
 		Duration = dur;
 	}
-	public override void Activate(GameObject target, Vector3 originalPos, float time) {
+	public override void Activate(GameObject target, Vector3 originalPos, Vector4 originalColor, float time) {
 		if(UseStart)
 			target.GetComponent<Transform>().position = Vector3.Lerp(StartPos, EndPos, time / Duration);
 		else
 			target.GetComponent<Transform>().position = Vector3.Lerp(originalPos, EndPos, time / Duration);
 	}
-	public override void Complete(GameObject target, Vector3 originalPos) {
+	public override void Complete(GameObject target, Vector3 originalPos, Vector4 originalColor) {
 		target.GetComponent<Transform>().position = EndPos;
 	}
 }
@@ -48,11 +48,27 @@ class ShiftNode : ANode {
 		ShiftPos = shiftPos;
 		Duration = dur;
 	}
-	public override void Activate(GameObject target, Vector3 originalPos, float time) {
+	public override void Activate(GameObject target, Vector3 originalPos, Vector4 originalColor, float time) {
 		target.GetComponent<Transform>().position = Vector3.Lerp(originalPos, originalPos + ShiftPos, time / Duration);
 	}
-	public override void Complete(GameObject target, Vector3 originalPos) {
+	public override void Complete(GameObject target, Vector3 originalPos, Vector4 originalColor) {
 		target.GetComponent<Transform>().position = originalPos + ShiftPos;
+	}
+}
+
+/* Alpha color node
+ */
+class AlphaNode : ANode {
+	float Alpha;
+	public AlphaNode (float alpha, float  dur) {
+		Alpha = alpha;
+		Duration = dur;
+	}
+	public override void Activate(GameObject target, Vector3 originalPos, Vector4 originalColor, float time) {
+		target.GetComponent<SpriteRenderer> ().color = Vector4.Lerp(originalColor, new Vector4 (originalColor.x, originalColor.y, originalColor.z, Alpha), time / Duration);
+	}
+	public override void Complete(GameObject target, Vector3 originalPos, Vector4 originalColor) {
+		target.GetComponent<SpriteRenderer> ().color = new Vector4 (originalColor.x, originalColor.y, originalColor.z, Alpha);
 	}
 }
 
@@ -65,6 +81,7 @@ class AnimationList {
 	
 	GameObject Target;
 	Vector3 OriginalPos;
+	Vector4 OriginalColor;
 
 	LinkedList<ANode> AList;
 	public LinkedListNode<ANode> CurNode;
@@ -81,6 +98,7 @@ class AnimationList {
 		Timer = 0;
 		Duration = CurNode.Value.Duration;
 		OriginalPos = Target.GetComponent<Transform>().position;
+		OriginalColor = Target.GetComponent<SpriteRenderer>().color;
 	}
 
 	public void Update() {
@@ -89,18 +107,18 @@ class AnimationList {
 		Timer += Time.deltaTime;
 		if (Timer > Duration) {
 			Timer = 0;
-			CurNode.Value.Complete(Target, OriginalPos);
+			CurNode.Value.Complete(Target, OriginalPos, OriginalColor);
 			CurNode = CurNode.Next;
 			OriginalPos = Target.GetComponent<Transform>().position;
 			if (CurNode == null) {
 				Complete = true; return;
 			} else Duration = CurNode.Value.Duration;
-		} else CurNode.Value.Activate(Target, OriginalPos, Timer);
+		} else CurNode.Value.Activate(Target, OriginalPos, OriginalColor, Timer);
 	}
 
 	public void CompleteAnimation() {
 		while (CurNode != null) {
-			CurNode.Value.Complete (Target, OriginalPos);
+			CurNode.Value.Complete (Target, OriginalPos, OriginalColor);
 			OriginalPos = Target.GetComponent<Transform> ().position;
 			CurNode = CurNode.Next;
 		}
@@ -208,6 +226,9 @@ public class AnimManager {
 		case "#S":
 			string[] vec = args[1].Split(',');
 			anim.AddLast(new ShiftNode(new Vector3(float.Parse(vec[0].Trim()), float.Parse(vec[1].Trim()), float.Parse(vec[2].Trim())), float.Parse(args[2].Trim())));
+			break;
+		case "#A":
+			anim.AddLast(new AlphaNode(float.Parse(args[1].Trim()), float.Parse(args[2].Trim())));
 			break;
 		default:
 			break;
