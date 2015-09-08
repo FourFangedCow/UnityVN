@@ -94,6 +94,14 @@ class ScaleNode : ANode {
 	{ target.GetComponent<Transform>().localScale = new Vector3(Scale.x, Scale.y, 0); }
 }
 
+/* Delay node
+ */
+class DelayNode : ANode {
+	public DelayNode (float  dur) { Duration = dur; }
+	public override void Activate(GameObject target, OriginalInfo origin, float time) { }
+	public override void Complete(GameObject target, OriginalInfo origin) { }
+}
+
 /* Combined nodes have multiple ANodes inside them. Crazy shit. 
  */
 class CombinedNode : ANode {

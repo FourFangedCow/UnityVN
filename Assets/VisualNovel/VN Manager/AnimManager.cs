@@ -184,6 +184,8 @@ public class AnimManager {
 			return new ScaleNode(new Vector2(float.Parse(vec[0].Trim()), float.Parse(vec[1].Trim())), float.Parse(args[2].Trim()));
 		case "#A":
 			return new AlphaNode(float.Parse(args[1].Trim()), float.Parse(args[2].Trim()));
+		case "#D":
+			return new DelayNode(float.Parse(args[1].Trim()));
 		case "#C":
 			return CreateCombinedNode(sr);
 		default:
