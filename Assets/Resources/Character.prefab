@@ -9,6 +9,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 442158}
   - 212: {fileID: 21296570}
+  - 114: {fileID: 11491900}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -28,6 +29,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+--- !u!114 &11491900
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 192366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 733347f28b6f6da419299dd6fa124405, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!212 &21296570
 SpriteRenderer:
   m_ObjectHideFlags: 1

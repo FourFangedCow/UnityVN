@@ -15,70 +15,6 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 
-/* Scene nodes are the base for all scene events. This includes character
- * animation, text, special effects, etc.
- */
-public abstract class SceneNode {
-	public SceneNode () {
-	}
-
-	// Activate function. Returns the delay if timed. Returns -1 if infinite.
-	public virtual float Activate(SceneManager SM) {
-		return -1;
-	}
-
-}
-/* Text nodes are for displaying text. Yup.
- */
-public class TextNode : SceneNode {
-	
-	public string Name = "DEFAULT NAME";
-	public string Text = "DEFAULT TEXT";
-	
-	public TextNode(string name, string text) {
-		Name = name;
-		Text = text;
-	}
-	public override float Activate(SceneManager SM) {
-		SM.TM.Activate(this);
-		return -1.0f;
-	}
-}
-
-/* Anim nodes are for moving and manipulating characters using an animation
- * node queue.
- */
-public class AnimNode : SceneNode {
-	
-	public string ID = "DEFAULT";
-	public string AnimName = "";
-	
-	public AnimNode(string id, string anim) {
-		ID = id;
-		AnimName = anim;
-	}
-	public override float Activate(SceneManager SM) {
-		SM.AM.AddOverwriteAnimation(ID, AnimName);
-		return 0.0f;
-	}
-}
-/* Sprite nodes change the character's sprite.
- */
-public class SpriteNode : SceneNode {
-	public string ID = "Default";
-	public string Name = "Idle";
-	public SpriteNode(string id, string name) {
-		ID = id;
-		Name = name;
-	}
-	public override float Activate(SceneManager SM) {
-		SM.GetCharObj(ID).GetComponent<CharacterBase>().SetSprite(Name);
-		SM.NextSceneNode ();
-		return -1.0f;
-	}
-}
-
-
 /* The scene manager maintains the scene node queue and makes sure events
  * are fired correctly and in a timely manner. Takes a text file and
  * generates all the characters/nodes accordingly.
@@ -94,6 +30,9 @@ public class SceneManager : MonoBehaviour {
 	float SceneTimer = 0.0f;
 	float SceneDelay = -1.0f;	// The time delay until the next node.
 
+	// STATIC SHIT
+	public static string SceneToLoad = "TEST";
+
 	public SceneManager () {
 
 	}
@@ -101,7 +40,7 @@ public class SceneManager : MonoBehaviour {
 	void Start () {
 		TM = new TextManager(this);
 		AM = new AnimManager(this);
-		LoadScene ("Assets//VisualNovel//Text//Story//TEST.txt"); // TEMP
+		LoadScene ("Assets//VisualNovel//Text//Story//" + SceneToLoad + ".txt"); // TEMP
 		NextSceneNode();
 	}
 
@@ -117,7 +56,6 @@ public class SceneManager : MonoBehaviour {
 			TM.InputPressed();
 			AM.InputPressed();
 		}
-
 		TM.Update();
 		AM.Update();
 	
@@ -168,6 +106,9 @@ public class SceneManager : MonoBehaviour {
 			break;
 		case "#S":
 			SceneNodeQueue.Enqueue(new SpriteNode(args[1].Trim(), args[2].Trim()));
+			break;
+		case "#N":
+			SceneNodeQueue.Enqueue(new NewSceneNode(args[1].Trim()));
 			break;
 		default:
 			break;

@@ -1,0 +1,19 @@
+#CHARACTER
+ID 		| CJ
+Name 	| Craig Jong
+Sprite  | Connor
+PosVec 	| 5, 0, 0, false
+#END
+#CHARACTER
+ID 		| JH
+Name 	| Jeff Hirokawa
+Sprite  | Connor
+PosVec 	| -5, 0, 0, true
+#END
+
+#T | JH
+Hellooooooooooo
+#T | CJ
+HELLOOOOOOO
+#N | Scene2
+#END
