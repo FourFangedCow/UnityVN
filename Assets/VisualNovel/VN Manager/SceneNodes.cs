@@ -66,6 +66,22 @@ public class SpriteNode : SceneNode {
 	}
 }
 
+/* Sprite nodes change the character's sprite.
+ */
+public class BackgroundNode : SceneNode {
+	string Name;
+	public BackgroundNode(string name) {
+		Name = name;
+	}
+	public override float Activate(SceneManager SM) {
+		SM.Background.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(Name);
+		SM.NextSceneNode();
+		return -1.0f;
+	}
+}
+
+/* Changes to a new scene
+ */
 public class NewSceneNode : SceneNode {
 	string Scene = "TEST";
 	public NewSceneNode(string scene) {

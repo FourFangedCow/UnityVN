@@ -20,7 +20,6 @@ using System.Collections.Generic;
  * generates all the characters/nodes accordingly.
  */
 public class SceneManager : MonoBehaviour {
-	
 	public TextManager TM;
 	public AnimManager AM;
 	Queue<SceneNode> SceneNodeQueue = new Queue<SceneNode>();								// The scene node queue
@@ -29,6 +28,8 @@ public class SceneManager : MonoBehaviour {
 
 	float SceneTimer = 0.0f;
 	float SceneDelay = -1.0f;	// The time delay until the next node.
+
+	public GameObject Background;
 
 	// STATIC SHIT
 	public static string SceneToLoad = "TEST";
@@ -40,6 +41,7 @@ public class SceneManager : MonoBehaviour {
 	void Start () {
 		TM = new TextManager(this);
 		AM = new AnimManager(this);
+		Background = GameObject.Find("Background");
 		LoadScene ("Assets//VisualNovel//Text//Story//" + SceneToLoad + ".txt"); // TEMP
 		NextSceneNode();
 	}
