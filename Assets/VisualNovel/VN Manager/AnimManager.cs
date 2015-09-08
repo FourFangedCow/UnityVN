@@ -19,13 +19,13 @@ class MoveNode : ANode {
 	bool UseStart = false;
 	Vector3 StartPos;
 	Vector3 EndPos;
-	public MoveNode (Vector3 startPos, Vector3 endPos, float  dur) {
+	public MoveNode(Vector3 startPos, Vector3 endPos, float  dur) {
 		StartPos = startPos;
 		EndPos = endPos;
 		Duration = dur;
 		UseStart = true;
 	}
-	public MoveNode (Vector3 endPos, float  dur) {
+	public MoveNode(Vector3 endPos, float  dur) {
 		EndPos = endPos;
 		Duration = dur;
 	}
@@ -35,9 +35,8 @@ class MoveNode : ANode {
 		else
 			target.GetComponent<Transform>().position = Vector3.Lerp(originalPos, EndPos, time / Duration);
 	}
-	public override void Complete(GameObject target, Vector3 originalPos, Vector4 originalColor) {
-		target.GetComponent<Transform>().position = EndPos;
-	}
+	public override void Complete(GameObject target, Vector3 originalPos, Vector4 originalColor)
+	{ target.GetComponent<Transform>().position = EndPos; }
 }
 
 /* Rel movement node
@@ -48,12 +47,10 @@ class ShiftNode : ANode {
 		ShiftPos = shiftPos;
 		Duration = dur;
 	}
-	public override void Activate(GameObject target, Vector3 originalPos, Vector4 originalColor, float time) {
-		target.GetComponent<Transform>().position = Vector3.Lerp(originalPos, originalPos + ShiftPos, time / Duration);
-	}
-	public override void Complete(GameObject target, Vector3 originalPos, Vector4 originalColor) {
-		target.GetComponent<Transform>().position = originalPos + ShiftPos;
-	}
+	public override void Activate(GameObject target, Vector3 originalPos, Vector4 originalColor, float time)
+	{ target.GetComponent<Transform>().position = Vector3.Lerp(originalPos, originalPos + ShiftPos, time / Duration); }
+	public override void Complete(GameObject target, Vector3 originalPos, Vector4 originalColor)
+	{ target.GetComponent<Transform>().position = originalPos + ShiftPos; }
 }
 
 /* Alpha color node
@@ -64,11 +61,25 @@ class AlphaNode : ANode {
 		Alpha = alpha;
 		Duration = dur;
 	}
+	public override void Activate(GameObject target, Vector3 originalPos, Vector4 originalColor, float time)
+	{ target.GetComponent<SpriteRenderer>().color = Vector4.Lerp(originalColor, new Vector4 (originalColor.x, originalColor.y, originalColor.z, Alpha), time / Duration); }
+	public override void Complete(GameObject target, Vector3 originalPos, Vector4 originalColor)
+	{ target.GetComponent<SpriteRenderer>().color = new Vector4 (originalColor.x, originalColor.y, originalColor.z, Alpha); }
+}
+
+/* Combined nodes have multiple ANodes inside them. Crazy shit. 
+ */
+class CombinedNode : ANode {
+	public List<ANode> Nodes = new List<ANode>();
+	public CombinedNode(float dur) { Duration = dur; }
+	// Activate function. Returns the delay if timed. Returns -1 if infinite.
 	public override void Activate(GameObject target, Vector3 originalPos, Vector4 originalColor, float time) {
-		target.GetComponent<SpriteRenderer> ().color = Vector4.Lerp(originalColor, new Vector4 (originalColor.x, originalColor.y, originalColor.z, Alpha), time / Duration);
+		foreach(ANode node in Nodes)
+			node.Activate(target, originalPos, originalColor, time);
 	}
 	public override void Complete(GameObject target, Vector3 originalPos, Vector4 originalColor) {
-		target.GetComponent<SpriteRenderer> ().color = new Vector4 (originalColor.x, originalColor.y, originalColor.z, Alpha);
+		foreach(ANode node in Nodes)
+			node.Complete(target, originalPos, originalColor);
 	}
 }
 
@@ -117,7 +128,7 @@ class AnimationList {
 	}
 
 	public void CompleteAnimation() {
-		while (CurNode != null) {
+		while(CurNode != null) {
 			CurNode.Value.Complete (Target, OriginalPos, OriginalColor);
 			OriginalPos = Target.GetComponent<Transform> ().position;
 			CurNode = CurNode.Next;
@@ -142,23 +153,23 @@ public class AnimManager {
 
 	
 	// CONSTRUCTOR
-	public AnimManager (SceneManager sm) {
+	public AnimManager(SceneManager sm) {
 		Initialize(sm);
 	}
 	
 	// Use this for initialization
-	void Initialize (SceneManager sm) {
+	void Initialize(SceneManager sm) {
 		SM = sm;
 		Active = true;
 		AnimationLibrary = new Dictionary<string, LinkedList<ANode>>();
 		AnimationLists = new Dictionary<string, AnimationList>();
 		MarkedForRemoval = new List<string>();
-		LoadAnimations ();
+		LoadAnimations();
 	}
 	
 	// Update is called once per frame
-	public void Update () {
-		if (Active) {
+	public void Update() {
+		if(Active) {
 			Dictionary<string, AnimationList>.ValueCollection values = AnimationLists.Values;
 			foreach(AnimationList list in values) {
 				list.Update();
@@ -206,7 +217,9 @@ public class AnimManager {
 				do {
 					line = sr.ReadLine ();
 					if(line != null) {
-						ProcessString (sr, line, newAnim);
+						ANode newNode = ProcessString (sr, line);
+						if(newNode != null)
+							newAnim.AddLast(newNode);
 					}
 				} while (line != null);
 				sr.Close();
@@ -217,22 +230,22 @@ public class AnimManager {
 		}
 	}
 
-	void ProcessString(StreamReader sr, string line, LinkedList<ANode> anim) {
-		string[] args = line.Split ('|');
+	ANode ProcessString(StreamReader sr, string line) {
+		string[] args = line.Split('|');
 		switch(args[0].Trim()) {
 		case "#M":
-			anim.AddLast(CreateMoveNode(args));
-			break;
+			return CreateMoveNode(args);
 		case "#S":
 			string[] vec = args[1].Split(',');
-			anim.AddLast(new ShiftNode(new Vector3(float.Parse(vec[0].Trim()), float.Parse(vec[1].Trim()), float.Parse(vec[2].Trim())), float.Parse(args[2].Trim())));
-			break;
+			return new ShiftNode(new Vector3(float.Parse(vec[0].Trim()), float.Parse(vec[1].Trim()), float.Parse(vec[2].Trim())), float.Parse(args[2].Trim()));
 		case "#A":
-			anim.AddLast(new AlphaNode(float.Parse(args[1].Trim()), float.Parse(args[2].Trim())));
-			break;
+			return new AlphaNode(float.Parse(args[1].Trim()), float.Parse(args[2].Trim()));
+		case "#C":
+			return CreateCombinedNode(sr);
 		default:
 			break;
 		}
+		return null;
 	}
 
 	MoveNode CreateMoveNode(string[] args) {
@@ -257,5 +270,22 @@ public class AnimManager {
 			break;
 		}
 		return node;
+	}
+
+	CombinedNode CreateCombinedNode(StreamReader sr) {
+		string line;
+		CombinedNode combinedNode = new CombinedNode(0);
+		do {
+			line = sr.ReadLine ();
+			if(line != null) {
+				ANode newNode = ProcessString (sr, line);
+				if(newNode != null) {
+					combinedNode.Nodes.Add(newNode);
+					if(newNode.Duration > combinedNode.Duration)
+						combinedNode.Duration = newNode.Duration;
+				}
+			}
+		} while(line != "#END");
+		return combinedNode;
 	}
 }
