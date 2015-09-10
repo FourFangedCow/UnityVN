@@ -20,15 +20,23 @@ public class TextManager {
 
 	// CONSTRUCTOR
 	public TextManager(SceneManager sm) {
-		Initialize(sm);
+		SM = sm;
+		Active = false;
+		//Initialize(sm);
 	}
 
 	// Use this for initialization
-	void Initialize (SceneManager sm) {
-		SM = sm;
+	public void Initialize() {
 		Active = false;
 		Name = GameObject.Find("Text_Name").GetComponent<Text>();
 		Chat = GameObject.Find("Text_Chat").GetComponent<Text>();
+	}
+
+	// Clean manager for re-use
+	public void CleanUp () {
+		Name = null;
+		Chat = null;
+		Active = false;
 	}
 	
 	// Update is called once per frame

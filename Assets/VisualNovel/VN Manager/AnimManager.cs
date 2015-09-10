@@ -91,17 +91,24 @@ public class AnimManager {
 	
 	// CONSTRUCTOR
 	public AnimManager(SceneManager sm) {
-		Initialize(sm);
+		SM = sm;
+		Active = false;
+		AnimationLibrary = new Dictionary<string, LinkedList<ANode>>();
+		LoadAnimations();
 	}
 	
 	// Use this for initialization
-	void Initialize(SceneManager sm) {
-		SM = sm;
+	public void Initialize() {
 		Active = true;
-		AnimationLibrary = new Dictionary<string, LinkedList<ANode>>();
 		AnimationLists = new Dictionary<string, AnimationList>();
 		MarkedForRemoval = new List<string>();
-		LoadAnimations();
+	}
+	
+	// Clean manager for re-use
+	public void CleanUp () {
+		Active = false;
+		AnimationLists = null;
+		MarkedForRemoval = null;
 	}
 	
 	// Update is called once per frame

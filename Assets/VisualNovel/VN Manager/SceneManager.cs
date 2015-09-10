@@ -20,11 +20,15 @@ using System.Collections.Generic;
  * generates all the characters/nodes accordingly.
  */
 public class SceneManager : MonoBehaviour {
+
+	public bool Active;
 	public TextManager TM;
 	public AnimManager AM;
-	Queue<SceneNode> SceneNodeQueue = new Queue<SceneNode>();								// The scene node queue
-	Dictionary<string,GameObject> CharacterObjects = new Dictionary<string,GameObject>();	// List of character objects by ID
-	Dictionary<string,string> CharacterNames = new Dictionary<string,string>();				// List of character names by ID
+	GameObject VisualElements;
+	GameObject TextCanvas;
+	Queue<SceneNode> SceneNodeQueue;								// The scene node queue
+	Dictionary<string,GameObject> CharacterObjects;	// List of character objects by ID
+	Dictionary<string,string> CharacterNames;				// List of character names by ID
 
 	float SceneTimer = 0.0f;
 	float SceneDelay = -1.0f;	// The time delay until the next node.
@@ -39,11 +43,10 @@ public class SceneManager : MonoBehaviour {
 	}
 
 	void Start () {
+		//CreateScene();
 		TM = new TextManager(this);
 		AM = new AnimManager(this);
-		Background = GameObject.Find("Background");
-		LoadScene ("Assets//VisualNovel//Text//Story//" + SceneToLoad + ".txt"); // TEMP
-		NextSceneNode();
+
 	}
 
 	// Activated the next scene node in the queue
@@ -53,19 +56,59 @@ public class SceneManager : MonoBehaviour {
 	}	
 
 	// Update is called once per frame
-	void Update () {
-		if (Input.GetKeyUp (KeyCode.Space)) { // INPUT SHOULD BE CHANGED
-			TM.InputPressed();
-			AM.InputPressed();
+	void Update() {
+		if(Input.GetKeyUp(KeyCode.A)) { // INPUT SHOULD BE CHANGED
+			CreateScene("TEST");
 		}
-		TM.Update();
-		AM.Update();
-	
-		// Updating the scene node queue
-		SceneTimer += Time.deltaTime;
-		if (SceneDelay != -1.0f && SceneTimer > SceneDelay) {
-			NextSceneNode ();
+		if(Input.GetKeyUp(KeyCode.S)) { // INPUT SHOULD BE CHANGED
+			EndScene();
 		}
+		if(Active) {
+			if(Input.GetKeyUp(KeyCode.Space)) { // INPUT SHOULD BE CHANGED
+				TM.InputPressed();
+				AM.InputPressed();
+			}
+			TM.Update();
+			AM.Update();
+		
+			// Updating the scene node queue
+			SceneTimer += Time.deltaTime;
+			if(SceneDelay != -1.0f && SceneTimer > SceneDelay) {
+				NextSceneNode();
+			}
+		}
+	}
+
+	// Make Scene
+	void CreateScene(string sceneName) {
+		SceneToLoad = sceneName;
+		Active = true;
+		SceneNodeQueue = new Queue<SceneNode>();								// The scene node queue
+		CharacterObjects = new Dictionary<string,GameObject>();	// List of character objects by ID
+		CharacterNames = new Dictionary<string,string>();				// List of character names by ID
+		VisualElements = (GameObject)Instantiate(Resources.Load("VN_VisualElements"), new Vector3(0, 0, 0), new Quaternion());
+		TextCanvas = (GameObject)Instantiate(Resources.Load("VN_TextCanvas"), new Vector3(0, 0, 0), new Quaternion());
+		Background = GameObject.Find("Background");
+		AM.Initialize();
+		TM.Initialize();
+
+		LoadScene ("Assets//VisualNovel//Text//Story//" + SceneToLoad + ".txt"); // TEMP
+		NextSceneNode();
+	}
+
+	// End Scene
+	void EndScene() {
+		SceneNodeQueue = null;
+		Dictionary<string, GameObject>.ValueCollection values = CharacterObjects.Values;
+		foreach(GameObject character in values)
+			Destroy(character);
+		CharacterObjects = null;
+		CharacterNames = null;
+		Destroy(VisualElements);
+		Destroy(TextCanvas);
+		Background = null;
+		AM.CleanUp();
+		TM.CleanUp();
 	}
 
 
@@ -131,7 +174,7 @@ public class SceneManager : MonoBehaviour {
 	void CreateCharacter (StreamReader sr) {
 		string[] args;
 		string id = "default";
-		GameObject character = (GameObject)Instantiate(Resources.Load("Character"), new Vector3(100, 0, 0), new Quaternion());
+		GameObject character = (GameObject)Instantiate(Resources.Load("VN_Character"), new Vector3(100, 0, 0), new Quaternion());
 		do {
 			args = sr.ReadLine().Split('|');
 			switch(args[0].Trim()) {
